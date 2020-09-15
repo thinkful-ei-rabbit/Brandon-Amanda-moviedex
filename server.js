@@ -1,13 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
+const helmet = require('helmet');
+const cors = require('cors');
 const movieData = require('./movie-data.js');
 
 const app = express();
 
 
 app.use(morgan('dev'));
-
+app.use(helmet());
+app.use(cors());
 // app.use((req, res) => {
 //   res.send('Hello, world!')
 // })
@@ -29,13 +32,13 @@ app.get('/movies', (req,res) => {
   const { genre, country, avg_vote } = req.query;
 
   if(genre) {
-    if(!['Animation', 'Drama', 'Romantic', 'Comedy', 'Spy', 'Crime', 'Thriller', 'Adventure', 'Documentary', 'Horror', 'Action', 'Western', 'History', 'Biography', 'Musical', 'Fantasy', 'War', 'Grotesque'].includes(genre)) {
+    if(!['animation', 'drama', 'romantic', 'comedy', 'spy', 'crime', 'thriller', 'adventure', 'documentary', 'horror', 'action', 'western', 'history', 'biography', 'musical', 'fantasy', 'war', 'grotesque'].includes(genre.toLowerCase())) {
       return res.status(400).send('Please senter an appropriate genre');
     }
   }
 
   if(country) {
-    if(!['United States', 'Italy', 'Germany', 'Israel', 'Great Britain', 'France', 'Hungary', 'China', 'Canada', 'Spain', 'Japan'].includes(country)) {
+    if(!['united states', 'italy', 'germany', 'israel', 'great britain', 'france', 'hungary', 'china', 'canada', 'spain', 'japan'].includes(country.toLowerCase())) {
       return res.status(400).send('Please enter an appropriate country');
     }
   }
@@ -48,14 +51,14 @@ app.get('/movies', (req,res) => {
 
   if(genre) {
     data = data.filter(movie => {
-      return movie.genre.includes(genre);
-    })
+      return movie.genre.toLowerCase().includes(genre.toLowerCase());
+    });
   }
 
   if(country) {
     data = data.filter(movie => {
-      return movie.country.includes(country);
-    })
+      return movie.country.toLowerCase().includes(country.toLowerCase());
+    });
   }
 
   if(avg_vote) {
